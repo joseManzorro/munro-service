@@ -1,9 +1,9 @@
 package com.xdesign.munro.api;
 
-import com.xdesign.munro.domain.MunroData;
+import com.xdesign.munro.dto.MunroDto;
+import com.xdesign.munro.facade.MunroFacade;
 import com.xdesign.munro.parameters.Category;
 import com.xdesign.munro.parameters.SortDirection;
-import com.xdesign.munro.service.MunroService;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,19 +23,19 @@ public class MunroController {
 
     static final String MUNROS_API_PATH = "/munros";
 
-    private MunroService munroService;
+    private MunroFacade munroFacade;
 
     @GetMapping
-    public List<MunroData> findMunros(@RequestParam(defaultValue = "MUN") Category category,
-                                      @RequestParam(required = false) @Positive Float maxHeightInMeters,
-                                      @RequestParam(required = false) @Positive Float minHeightInMeters,
-                                      @RequestParam(defaultValue = "DESC") SortDirection heightSort,
-                                      @RequestParam(defaultValue = "ASC") SortDirection nameSort,
-                                      @RequestParam(required = false) @Positive Long limit) {
+    public List<MunroDto> findMunros(@RequestParam(defaultValue = "MUN") Category category,
+                                     @RequestParam(required = false) @Positive Float maxHeightInMeters,
+                                     @RequestParam(required = false) @Positive Float minHeightInMeters,
+                                     @RequestParam(defaultValue = "DESC") SortDirection heightSort,
+                                     @RequestParam(defaultValue = "ASC") SortDirection nameSort,
+                                     @RequestParam(required = false) @Positive Long limit) {
 
         validateHeightParams(maxHeightInMeters, minHeightInMeters);
 
-        return munroService.findMunros(category, maxHeightInMeters, minHeightInMeters, heightSort, nameSort, Optional.ofNullable(limit));
+        return munroFacade.findMunros(category, maxHeightInMeters, minHeightInMeters, heightSort, nameSort, Optional.ofNullable(limit));
     }
 
     private void validateHeightParams(Float maxHeight, Float minHeight) {

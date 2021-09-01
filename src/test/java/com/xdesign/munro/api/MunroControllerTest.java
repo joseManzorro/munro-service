@@ -125,7 +125,7 @@ class MunroControllerTest {
     }
 
     @Test
-    void testInvocationWithDefaultParameters() throws Exception {
+    void whenNoParametersAreProvided_ThenServiceWillBeCalledWithDefaultValues() throws Exception {
         //When
         mvc.perform(get(MUNROS_API_PATH));
         //Then
@@ -138,6 +138,9 @@ class MunroControllerTest {
         //Given
         MunroData munro = new MunroData();
         munro.setRunningNo("1");
+        munro.setName("name-test");
+        munro.setHeightInMeters(100f);
+        munro.setGridRef("grid-ref-test");
         munro.setPostYear1997(Category.MUN.name());
 
         when(munroService.findMunros(any(), any(), any(), any(), any(), any())).thenReturn(singletonList(munro));
@@ -148,7 +151,11 @@ class MunroControllerTest {
         //Then
         performGet
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].['Post 1997']", is("MUN")))
+                .andExpect(jsonPath("$[0].*", hasSize(4)))
+                .andExpect(jsonPath("$[0].['name']", is("name-test")))
+                .andExpect(jsonPath("$[0].['heightInMeters']", is(100.0)))
+                .andExpect(jsonPath("$[0].['category']", is("MUN")))
+                .andExpect(jsonPath("$[0].['gridRef']", is("grid-ref-test")))
                 .andExpect(status().isOk());
     }
 }
